@@ -37,13 +37,13 @@ Edit `config/params.yaml` to set parameters:
 ```
 load_dir: data的路径  
 result_dir: 结果保存路径  
-is_large: 雷达帧数多，调为True  
+is_large: 雷达帧数多、地图大，可调为True  
 Transformation_LiDAR2IMU: 雷达到IMU的标定矩阵  
-start_idx, end_idx: 起始帧与结束帧  
+start_idx, end_idx: 起始帧与结束帧索引  
 FOV_V, FOV_H: 垂直与水平视场角  
-resize_ratio: 越大动态点检测能力越强  
+resize_ratio: 分辨率比例。越大动态点检测能力越强  
 need_revert: 是否恢复点  
-grid_size: 动态点检测到，越大滤除能力越强  
+grid_size: 栅格大小。动态点检测到，越大滤除能力越强  
 ```
 
 - Then, you can start the *Removert*
