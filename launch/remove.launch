@@ -1,9 +1,0 @@
-<launch>
-
-    <arg name="project" default="remover"/>
-
-    <rosparam file="$(find remover)/config/params.yaml" command="load" />
-
-    <node pkg="remover" type="remover"   name="remover"   output="screen"/>
-
-</launch>
