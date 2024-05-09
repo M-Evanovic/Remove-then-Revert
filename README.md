@@ -9,53 +9,49 @@
 - We can easily construct and save a static map. 
 - We can easily parse dynamic points 
 
-## Example
-- [Video 1: KITTI 09](https://youtu.be/V6OcdNVQRwg) with [SuMa poses](http://jbehley.github.io/projects/surfel_mapping/)
-- [Video 2: MulRan dataset with poses from SC-LIO-SAM](https://youtu.be/UiYYrPMcIRU)
-<p align="center"><img src="docs/removert.png" width=900></p>
 
 ## Preparations
-- Step 1: Get a set of LiDAR scans and corresponding poses by running any open source LiDAR odometry or SLAM algorithm (e.g., [pose-and-scan saver of SC-LIO-SAM](https://github.com/gisbi-kim/SC-LIO-SAM#applications) or [pose-and-scan saver of SC-A-LOAM](https://github.com/gisbi-kim/SC-A-LOAM#utilities))
-- Step 2: Make a pair of a scan's point cloud and a corresponding pose using associated timestamps. We note that you need to save a scan as a binary format as KITTI and the pose file as a single text file where SE(3) poses are written line-by-line (12 numbers for a single line), which is also the equivalent format as KITTI odometry's ground truth pose txt file.
+```
+data  
+├ poses.txt / pose.csv  
+├ Scans  
+│  ├ 000001.pcd  
+│  ├ 000002.pcd  
+│  ├ 000003.pcd  
+│  ├ ...  
+```
 
-## Requirements 
-- Based on C++17
-- ROS (and Eigen, PCL, OpenMP): the all examples in this readme are tested under Ubuntu 18.04 and ROS Melodic. 
-- FYI: We uses ROS's parameter parser for the convenience, despite no topic flows within our system (our repository currently runs at offline on the pre-prepared scans saved on a HDD or a SSD). But the speed is fast (over 10Hz for a single removing) and plan to extend to real-time slam integration in future.
 
 ## How to use 
 - First, compile the source 
 ```
-$ mkdir -p ~/catkin/removert_ws/src
-$ cd ~/catkin/removert_ws/src
-$ git clone https://github.com/irapkaist/removert.git
+$ mkdir ~/remover_ws/src
+$ cd ~/remover_ws/src
+$ git clone https://github.com/M-Evanovic/Remove-then-Revert.git
 $ cd ..
 $ catkin_make
 $ source devel/setup.bash
 ```
-- Before to start the launch file, you need to replace data paths in the config/params.yaml file. More details about it, you can refer the above tutorial video ([KITTI 09](https://youtu.be/V6OcdNVQRwg))
+- Before to start the launch file, you need to replace data paths in the `config/params.yaml` file.  
+Edit `config/params.yaml` to set parameters:  
+```
+load_dir: data的路径  
+result_dir: 结果保存路径  
+is_large: 雷达帧数多，调为True  
+Transformation_LiDAR2IMU: 雷达到IMU的标定矩阵  
+start_idx, end_idx: 起始帧与结束帧  
+FOV_V, FOV_H: 垂直与水平视场角  
+resize_ratio: 越大动态点检测能力越强  
+need_revert: 是否恢复点  
+grid_size: 动态点检测到，越大滤除能力越强  
+```
 
 - Then, you can start the *Removert*
 ```
-$ roslaunch removert run_kitti.launch # if you use KITTI dataset 
- or
-$ roslaunch removert run_scliosam.launch # see this tutorial: https://youtu.be/UiYYrPMcIRU
+$ roslaunch remover remove.launch 
 ```
 
-- (Optional) we supports Matlab tools to visulaize comparasions of original/cleaned maps (see tools/matlab).
 
-
-## Further Improvements 
-- We propose combining recent deep learning-based dynamic removal (e.g., [LiDAR-MOS](https://github.com/PRBonn/LiDAR-MOS)) and our method for better map cleaning 
-    - Deep learning-based removal could run online and good for proactive removal of bunch of points. 
-    - Removert currently runs offline but good at finer cleaning for the remained 3D points after LiDAR-MOS ran.     
-- A [tutorial video](https://youtu.be/zWuoqtDofsE) and an example result for the KITTI 01 sequence: 
-<p align="center"><img src="docs/fusion.png" width=550></p>
-
-## Contact 
-```
-paulgkim@kaist.ac.kr
-```
 
 ## Cite *Removert*
 ```
